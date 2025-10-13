@@ -1,6 +1,6 @@
 # IPv6 Connectivity Test
 
-A comprehensive web application for testing IPv4 and IPv6 connectivity, combining the functionality of ip6.biz and test-ipv6.com with the clean design aesthetic of ipv6.army.
+A basic web application for testing IPv4 and IPv6 connectivity. Should test basic connectivity, highlight better performing protocols, and provide a pass/fail for general IPv6 connectivity. A blatant copy of the functionality of the ip6.biz and test-ipv6.com sites. Given the change of test-ipv6.com going away, a simple open alternative is probably useful.
 
 ## Features
 
@@ -97,8 +97,7 @@ This application:
 
 ## License
 
-This is free and unencumbered software released into the public domain.
-
+Apache 2.0
 ## Credits
 
 Inspired by:

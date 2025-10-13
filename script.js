@@ -1,4 +1,7 @@
 // IPv6 Connectivity Test Script
+// cobbled together by buraglio@forwardingplane.net
+// Apache 2.0 licensed https://www.apache.org/licenses/LICENSE-2.0.txt
+// Use at your own peril. 
 
 class IPv6Tester {
     constructor() {
