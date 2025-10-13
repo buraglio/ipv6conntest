@@ -1,6 +1,6 @@
 # IPv6 Connectivity Test
 
-A basic web application for testing IPv4 and IPv6 connectivity. Should test basic connectivity, highlight better performing protocols, and provide a pass/fail for general IPv6 connectivity. A blatant copy of the functionality of the ip6.biz and test-ipv6.com sites. Given the change of test-ipv6.com going away, a simple open alternative is probably useful.
+A basic web application for testing IPv4 and IPv6 connectivity. Should test basic connectivity, highlight better performing protocols, and provide a pass/fail for general IPv6 connectivity. A blatant copy of the functionality of the ip6.biz and test-ipv6.com sites. Given the chance of test-ipv6.com going away, a simple open alternative is probably useful.
 
 ## Features
 
@@ -29,11 +29,10 @@ Provides an overall score (0-10) indicating your network's readiness for IPv6:
 ## Design
 
 The application features a clean, modern interface with:
-- Color scheme inspired by ipv6.army (blue primary colors, teal accents)
-- Responsive design that works on desktop, tablet, and mobile
+- Color scheme inspired by ipv6.army (blue primary colors, orange and yellow accents)
+- Responsive design that should work on desktop, tablet, and mobile
 - Clear visual indicators for test results (success/failure states)
-- Smooth animations and transitions
-- Easy-to-read typography
+- Easy-to-read, probably
 
 ## How It Works
 
@@ -42,19 +41,22 @@ The application uses JavaScript to:
 2. Test connectivity to IPv4-only and IPv6-only resources
 3. Perform DNS resolution tests for different scenarios
 4. Calculate an overall readiness score based on all test results
+5. Display popular sites that are lame and only support legacy IPv4
 
-All tests run automatically when the page loads, and you can re-run them at any time using the "Run Tests Again" button.
+All basic tests run automatically when the page loads, and you can re-run them at any time using the "Run Tests Again" button.
 
 ## Technologies Used
 
 - **HTML5**: Semantic markup structure
 - **CSS3**: Modern styling with CSS Grid, Flexbox, and animations
 - **Vanilla JavaScript**: No frameworks required - pure ES6+ JavaScript
-- **Public APIs**: Uses ipify.org and ipinfo.io for IP detection
+- **Public APIs**: Uses ipify.org and ipinfo.io for IP detection - might need to change this later
 
 ## Usage
 
-Simply open `index.html` in any modern web browser. The tests will run automatically.
+Simply open `index.html` in any modern web browser. The basic tests will run automatically.
+
+Further tests to popular web sites can be run on-demand in order to test basic browser performance.
 
 ### Local Development
 
