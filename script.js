@@ -28,7 +28,7 @@ class IPv6Tester {
             { name: 'YouTube', domain: 'www.youtube.com', ipv4Url: 'https://www.youtube.com/favicon.ico', ipv6Url: 'https://www.youtube.com/favicon.ico', hasIPv6: true },
             { name: 'Netflix', domain: 'www.netflix.com', ipv4Url: 'https://www.netflix.com/favicon.ico', ipv6Url: 'https://www.netflix.com/favicon.ico', hasIPv6: true },
             { name: 'Wikipedia', domain: 'www.wikipedia.org', ipv4Url: 'https://www.wikipedia.org/favicon.ico', ipv6Url: 'https://www.wikipedia.org/favicon.ico', hasIPv6: true },
-            { name: 'GitHub', domain: 'github.com', ipv4Url: 'https://github.com/favicon.ico', ipv6Url: 'https://github.com/favicon.ico', hasIPv6: true },
+            { name: 'GitHub', domain: 'github.com', ipv4Url: 'https://github.com/favicon.ico', ipv6Url: 'https://github.com/favicon.ico', hasIPv6: false },
             { name: 'Cloudflare', domain: 'www.cloudflare.com', ipv4Url: 'https://www.cloudflare.com/favicon.ico', ipv6Url: 'https://www.cloudflare.com/favicon.ico', hasIPv6: true },
             { name: 'Akamai', domain: 'www.akamai.com', ipv4Url: 'https://www.akamai.com/favicon.ico', ipv6Url: 'https://www.akamai.com/favicon.ico', hasIPv6: true },
             { name: 'Microsoft', domain: 'www.microsoft.com', ipv4Url: 'https://www.microsoft.com/favicon.ico', ipv6Url: 'https://www.microsoft.com/favicon.ico', hasIPv6: true },
