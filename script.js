@@ -208,7 +208,7 @@ class IPv6Tester {
     }
 
     async testDNS(type) {
-        // Use image loading to test connectivity without CORS issues
+        // Use image loading to test connectivity without CORS issues. This relies on those images never going away, which is probably dumb.
         const endpoints = {
             'ipv4-only': 'https://ipv4.google.com/favicon.ico',
             'ipv6-only': 'https://ipv6.google.com/favicon.ico',
@@ -243,7 +243,7 @@ class IPv6Tester {
 
     async testIPv6LargePacket() {
         // Simulate large packet test by attempting to load a larger resource over IPv6
-        // In a real implementation, this would test MTU and fragmentation
+        // In a real implementation, this would test MTU and fragmentation but we can't really do that stuff from a browser, as far as I know
         if (!this.testResults.ipv6Connectivity) {
             return false;
         }
@@ -297,7 +297,7 @@ class IPv6Tester {
             detailTime.textContent = `${time.toFixed(0)}ms`;
         }
     }
-
+// Calculate the score in a sane-ish way
     calculateScore() {
         let score = 0;
         let maxScore = 10;
@@ -336,7 +336,7 @@ class IPv6Tester {
         } else if (score >= 3) {
             message = 'Limited. Your network has minimal IPv6 support.';
         } else {
-            message = 'Poor. Your network lacks IPv6 connectivity.';
+            message = 'Poor. Your network lacks IPv6 connectivity. Check https://request.ipv6.army';
         }
 
         document.getElementById('score-message').textContent = message;
