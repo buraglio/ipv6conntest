@@ -125,6 +125,33 @@ header {
     padding: var(--spacing-lg) 0;
 }
 
+.top-links {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    margin-bottom: var(--spacing-md);
+    flex-wrap: wrap;
+}
+
+.top-links a {
+    color: var(--accent-yellow);
+    text-decoration: none;
+    font-weight: 600;
+    padding: var(--spacing-xs) var(--spacing-md);
+    border: 2px solid var(--accent-yellow);
+    border-radius: var(--radius-md);
+    transition: all 0.3s ease;
+    background-color: var(--bg-card);
+    box-shadow: var(--shadow-sm);
+}
+
+.top-links a:hover {
+    background-color: var(--accent-yellow);
+    color: #000000;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md), 0 0 15px rgba(255, 215, 0, 0.4);
+}
+
 .header-logo {
     width: 300px;
     height: auto;
@@ -643,6 +670,15 @@ header h1 {
     box-shadow: inset 0 0 10px rgba(255, 215, 0, 0.05);
 }
 
+.sites-table tbody tr.no-ipv6-support {
+    background-color: rgba(255, 140, 0, 0.15);
+    border-left: 4px solid var(--accent-orange);
+}
+
+.sites-table tbody tr.no-ipv6-support:hover {
+    background-color: rgba(255, 140, 0, 0.25);
+}
+
 .sites-table tbody tr:last-child {
     border-bottom: none;
 }
@@ -726,6 +762,13 @@ header h1 {
     color: var(--text-secondary);
 }
 
+.latency-no-ipv6 {
+    background-color: var(--accent-orange);
+    color: #000000;
+    font-weight: 600;
+    border: 1px solid var(--accent-orange);
+}
+
 .speed-difference {
     font-size: 0.75rem;
     font-weight: 600;
@@ -771,6 +814,15 @@ footer {
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    .top-links {
+        gap: var(--spacing-xs);
+    }
+
+    .top-links a {
+        padding: var(--spacing-xs) var(--spacing-sm);
+        font-size: 0.9rem;
+    }
+
     .header-logo {
         width: 200px;
     }

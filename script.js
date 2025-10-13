@@ -410,7 +410,7 @@ class IPv6Tester {
     setupSitesTable() {
         const tbody = document.getElementById('sites-table-body');
         tbody.innerHTML = this.wellKnownSites.map((site, index) => `
-            <tr data-site-index="${index}">
+            <tr data-site-index="${index}" ${site.hasIPv6 === false ? 'class="no-ipv6-support"' : ''}>
                 <td class="site-name">${site.name}<br><small>${site.domain}</small></td>
                 <td class="status-cell ipv4-cell"><span class="site-status pending">Pending</span></td>
                 <td class="status-cell ipv6-cell"><span class="site-status pending">Pending</span></td>
@@ -524,7 +524,7 @@ class IPv6Tester {
 
             if (site.hasIPv6 === false) {
                 // Site is known not to support IPv6
-                ipv6Cell.textContent = 'Not Supported';
+                ipv6Cell.textContent = 'Not Supported. Lame!';
                 ipv6Cell.className = 'site-status pending';
             } else {
                 const ipv6Start = performance.now();
@@ -550,7 +550,7 @@ class IPv6Tester {
             if (site.hasIPv6 === false) {
                 // Site doesn't support IPv6 - highlight in orange
                 ipv4LatencyValue.textContent = `${ipv4Time.toFixed(0)}ms`;
-                ipv6LatencyValue.textContent = 'Not Supported';
+                ipv6LatencyValue.textContent = 'Not Supported. Lame!';
                 ipv6LatencyDiv.classList.add('latency-no-ipv6');
             } else if (ipv4Result && ipv6Result) {
                 ipv4LatencyValue.textContent = `${ipv4Time.toFixed(0)}ms`;
