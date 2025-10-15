@@ -143,8 +143,13 @@ class IPv6Tester {
         this.testResults.ipv4Connectivity = ipv4Result;
         this.updateStatusIndicator('ipv4-status', ipv4Result);
 
-        // Test IPv6 connectivity
-        const ipv6Result = await this.testEndpoint('https://ipv6.icanhazip.com/', 'ipv6');
+        // Test IPv6 connectivity - only if we detected an IPv6 address
+        let ipv6Result = false;
+        if (this.ipv6Address && this.ipv6Address !== 'Not available') {
+            ipv6Result = await this.testEndpoint('https://ipv6.icanhazip.com/', 'ipv6');
+        } else {
+            console.log('No IPv6 address detected, skipping IPv6 connectivity test');
+        }
         this.testResults.ipv6Connectivity = ipv6Result;
         this.updateStatusIndicator('ipv6-status', ipv6Result);
     }
@@ -185,10 +190,16 @@ class IPv6Tester {
         this.testResults.ipv4DNS = ipv4DNS;
         this.updateTestResult('test-ipv4-dns', ipv4DNS, this.testTimes.ipv4DNS);
 
-        // Test IPv6-only DNS
-        const startIpv6 = performance.now();
-        const ipv6DNS = await this.testDNS('ipv6-only');
-        this.testTimes.ipv6DNS = performance.now() - startIpv6;
+        // Test IPv6-only DNS - only if we have IPv6 connectivity
+        let ipv6DNS = false;
+        if (this.testResults.ipv6Connectivity) {
+            const startIpv6 = performance.now();
+            ipv6DNS = await this.testDNS('ipv6-only');
+            this.testTimes.ipv6DNS = performance.now() - startIpv6;
+        } else {
+            console.log('No IPv6 connectivity, skipping IPv6-only DNS test');
+            this.testTimes.ipv6DNS = 0;
+        }
         this.testResults.ipv6DNS = ipv6DNS;
         this.updateTestResult('test-ipv6-dns', ipv6DNS, this.testTimes.ipv6DNS);
 
@@ -208,7 +219,7 @@ class IPv6Tester {
     }
 
     async testDNS(type) {
-        // Use image loading to test connectivity without CORS issues. This relies on those images never going away, which is probably dumb.
+        // Use image loading to test connectivity without CORS issues
         const endpoints = {
             'ipv4-only': 'https://ipv4.google.com/favicon.ico',
             'ipv6-only': 'https://ipv6.google.com/favicon.ico',
@@ -217,23 +228,41 @@ class IPv6Tester {
 
         return new Promise((resolve) => {
             const img = new Image();
+            let resolved = false;
+
             const timeout = setTimeout(() => {
-                img.src = '';
-                console.error(`${type} DNS test timed out`);
-                resolve(false);
+                if (!resolved) {
+                    resolved = true;
+                    img.src = '';
+                    console.error(`${type} DNS test timed out`);
+                    resolve(false);
+                }
             }, 5000);
 
             img.onload = () => {
-                clearTimeout(timeout);
-                resolve(true);
+                if (!resolved) {
+                    resolved = true;
+                    clearTimeout(timeout);
+                    resolve(true);
+                }
             };
 
             img.onerror = () => {
-                clearTimeout(timeout);
-                // Even on error, if we got a response, DNS resolution worked
-                // We check if the error was due to DNS or just a 404/403
-                console.log(`${type} DNS test - got response (may be error but DNS worked)`);
-                resolve(true);
+                if (!resolved) {
+                    resolved = true;
+                    clearTimeout(timeout);
+                    // For IPv6-only tests, an error likely means no IPv6 connectivity
+                    // The browser falls back to IPv4 for dual-stack, but ipv6.google.com
+                    // should only resolve over IPv6
+                    if (type === 'ipv6-only') {
+                        console.log(`${type} DNS test - failed to load, likely no IPv6`);
+                        resolve(false);
+                    } else {
+                        // For IPv4-only and dual-stack, network error after DNS may still mean success
+                        console.log(`${type} DNS test - got network response`);
+                        resolve(true);
+                    }
+                }
             };
 
             // Add cache buster to prevent caching issues
@@ -250,21 +279,33 @@ class IPv6Tester {
 
         return new Promise((resolve) => {
             const img = new Image();
+            let resolved = false;
+
             const timeout = setTimeout(() => {
-                img.src = '';
-                console.error('IPv6 large packet test timed out');
-                resolve(false);
+                if (!resolved) {
+                    resolved = true;
+                    img.src = '';
+                    console.error('IPv6 large packet test timed out');
+                    resolve(false);
+                }
             }, 5000);
 
             img.onload = () => {
-                clearTimeout(timeout);
-                resolve(true);
+                if (!resolved) {
+                    resolved = true;
+                    clearTimeout(timeout);
+                    resolve(true);
+                }
             };
 
             img.onerror = () => {
-                clearTimeout(timeout);
-                // Even on error, if we got a response, connectivity worked
-                resolve(true);
+                if (!resolved) {
+                    resolved = true;
+                    clearTimeout(timeout);
+                    // Error on IPv6-only endpoint means no IPv6
+                    console.error('IPv6 large packet test failed - no IPv6 connectivity');
+                    resolve(false);
+                }
             };
 
             // Add cache buster
@@ -517,7 +558,7 @@ class IPv6Tester {
                 ipv4Cell.className = 'site-status failed';
             }
 
-            // Test IPv6 (only if site supports it)
+            // Test IPv6 (only if site supports it AND user has IPv6)
             let ipv6Result = false;
             let ipv6Time = 0;
             const ipv6Cell = row.querySelector('.ipv6-cell .site-status');
@@ -526,6 +567,10 @@ class IPv6Tester {
                 // Site is known not to support IPv6
                 ipv6Cell.textContent = 'Not Supported. Lame!';
                 ipv6Cell.className = 'site-status pending';
+            } else if (!this.testResults.ipv6Connectivity) {
+                // User doesn't have IPv6 connectivity
+                ipv6Cell.textContent = 'No IPv6 Available';
+                ipv6Cell.className = 'site-status failed';
             } else {
                 const ipv6Start = performance.now();
                 ipv6Result = await this.testSiteConnectivity(site.ipv6Url);
@@ -551,6 +596,11 @@ class IPv6Tester {
                 // Site doesn't support IPv6 - highlight in orange
                 ipv4LatencyValue.textContent = `${ipv4Time.toFixed(0)}ms`;
                 ipv6LatencyValue.textContent = 'Not Supported. Lame!';
+                ipv6LatencyDiv.classList.add('latency-no-ipv6');
+            } else if (!this.testResults.ipv6Connectivity) {
+                // User doesn't have IPv6
+                ipv4LatencyValue.textContent = `${ipv4Time.toFixed(0)}ms`;
+                ipv6LatencyValue.textContent = 'No IPv6';
                 ipv6LatencyDiv.classList.add('latency-no-ipv6');
             } else if (ipv4Result && ipv6Result) {
                 ipv4LatencyValue.textContent = `${ipv4Time.toFixed(0)}ms`;
@@ -604,20 +654,41 @@ class IPv6Tester {
     async testSiteConnectivity(url) {
         return new Promise((resolve) => {
             const img = new Image();
+            let resolved = false;
+
             const timeout = setTimeout(() => {
-                img.src = '';
-                resolve(false);
+                if (!resolved) {
+                    resolved = true;
+                    img.src = '';
+                    resolve(false);
+                }
             }, 3000);
 
             img.onload = () => {
-                clearTimeout(timeout);
-                resolve(true);
+                if (!resolved) {
+                    resolved = true;
+                    clearTimeout(timeout);
+                    resolve(true);
+                }
             };
 
             img.onerror = () => {
-                clearTimeout(timeout);
-                // Even on error, we got a response
-                resolve(true);
+                if (!resolved) {
+                    resolved = true;
+                    clearTimeout(timeout);
+                    // For IPv6-specific URLs (ipv6.* hostnames), error means failure
+                    // For general URLs, we can't be sure, so we'll be conservative
+                    const isIPv6Specific = url.includes('ipv6.');
+                    if (isIPv6Specific) {
+                        console.log(`IPv6-specific URL failed: ${url}`);
+                        resolve(false);
+                    } else {
+                        // For dual-stack sites, an error could mean the resource is missing
+                        // but the site is reachable. We'll mark as success if we got any response.
+                        // However, this is still unreliable, so we'll be conservative.
+                        resolve(false);
+                    }
+                }
             };
 
             img.src = url + '?t=' + Date.now();
